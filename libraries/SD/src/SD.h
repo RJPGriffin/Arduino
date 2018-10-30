@@ -23,6 +23,14 @@
 #define FILE_READ O_READ
 #define FILE_WRITE (O_READ | O_WRITE | O_CREAT)
 
+/**
+ * MMC Cards require a lower clock speed to initialize. Some SD cards
+ * do not respond to initialisation at such a low speed. Deault value
+ * set here is for MMC and can be overridden by passing the new initSpeed
+ * into the SD begin function.
+ */
+#define SPI_DEFAULT_INIT_FREQ 250000
+
 class File : public Stream {
  private:
   char _name[13]; // our name
@@ -64,14 +72,14 @@ public:
         return doneLen;
       }
     }
-  
+
     size_t leftLen = src.available();
     src.read(obuf, leftLen);
     sentLen = write(obuf, leftLen);
     doneLen = doneLen + sentLen;
     return doneLen;
   }
-  
+
   using Print::write;
 };
 
@@ -82,7 +90,7 @@ private:
   Sd2Card card;
   SdVolume volume;
   SdFile root;
-  
+
   // my quick&dirty iterator, should be replaced
   SdFile getParentDir(const char *filepath, int *indx);
 public:
@@ -104,11 +112,11 @@ public:
   // do not exist they will be created.
   boolean mkdir(const char *filepath);
   boolean mkdir(const String &filepath) { return mkdir(filepath.c_str()); }
-  
+
   // Delete the file.
   boolean remove(const char *filepath);
   boolean remove(const String &filepath) { return remove(filepath.c_str()); }
-  
+
   boolean rmdir(const char *filepath);
   boolean rmdir(const String &filepath) { return rmdir(filepath.c_str()); }
 
@@ -123,14 +131,14 @@ public:
 private:
 
   // This is used to determine the mode used to open a file
-  // it's here because it's the easiest place to pass the 
+  // it's here because it's the easiest place to pass the
   // information through the directory walking function. But
   // it's probably not the best place for it.
   // It shouldn't be set directly--it is set via the parameters to `open`.
   int fileOpenMode;
-  
+
   friend class File;
-  friend boolean callback_openPath(SdFile&, char *, boolean, void *); 
+  friend boolean callback_openPath(SdFile&, char *, boolean, void *);
 };
 
 #if !defined(NO_GLOBAL_INSTANCES) && !defined(NO_GLOBAL_SD)

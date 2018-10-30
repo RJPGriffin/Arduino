@@ -39,6 +39,14 @@ uint8_t const SPI_HALF_SPEED = 1;
 /** Set SCK rate to F_CPU/8. Sd2Card::setSckRate(). */
 uint8_t const SPI_QUARTER_SPEED = 2;
 #endif
+
+/**
+ * MMC Cards require a lower clock speed to initialize. Some SD cards
+ * do not respond to initialisation at such a low speed. Deault value
+ * set here is for MMC and can be overridden by passing the new initSpeed
+ * into the SDCard init function.
+ */
+#define SPI_DEFAULT_INIT_FREQ 250000
 /**
  * USE_SPI_LIB: if set, use the SPI library bundled with Arduino IDE, otherwise
  * run with a standalone driver for AVR.

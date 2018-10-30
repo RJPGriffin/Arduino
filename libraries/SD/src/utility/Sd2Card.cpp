@@ -253,9 +253,9 @@ uint8_t Sd2Card::eraseSingleBlockEnable(void) {
  * can be determined by calling errorCode() and errorData().
  */
 #ifdef ESP8266
-uint8_t Sd2Card::init(uint32_t sckRateID, uint8_t chipSelectPin) {
+uint8_t Sd2Card::init(uint32_t sckRateID, uint8_t chipSelectPin, uint8_t initSpeed = SPI_DEFAULT_INIT_FREQ) {
 #else
-uint8_t Sd2Card::init(uint8_t sckRateID, uint8_t chipSelectPin) {
+uint8_t Sd2Card::init(uint8_t sckRateID, uint8_t chipSelectPin, uint8_t initSpeed = SPI_DEFAULT_INIT_FREQ) {
 #endif
   errorCode_ = inBlock_ = partialBlockRead_ = type_ = 0;
   chipSelectPin_ = chipSelectPin;
@@ -283,7 +283,7 @@ uint8_t Sd2Card::init(uint8_t sckRateID, uint8_t chipSelectPin) {
   SPSR &= ~(1 << SPI2X);
 #else // USE_SPI_LIB
   SPI.begin();
-  settings = SPISettings(250000, MSBFIRST, SPI_MODE0);
+  settings = SPISettings(initSpeed, MSBFIRST, SPI_MODE0);
 #endif // USE_SPI_LIB
 #endif // SOFTWARE_SPI
 
